@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MapLibre Test</title>
+    <link rel="stylesheet" href="src/style.css">
+</head>
+
+<body>
+    <!-- Carte -->
+    <div id="map"></div>
+
+    <!-- Container des actions -->
+    <div id="container" class="card p-3">
+        <button id="btn-itineraire" class="btn btn-primary">Calculer l'itinéraire</button>
+    </div>
+
+
+    <!-- Div coordonnées -->
+    <div id="coordinates">
+        <p>lat <span id="lat-coord"></span></p>
+        <p>lng <span id="lng-coord"></span></p>
+    </div>
+
+    <!-- Menu contextuel -->
+    <ul id="custom-context-menu" class="list-group position-absolute">
+        <li class="list-group-item" id="cst_ctxmn_start_point">Définir le point de départ</li>
+        <li class="list-group-item" id="cst_ctxmn_end_point">Définir le point d'arrivée</li>
+        <li class="list-group-item" id="cst_ctxmn_add_marker">Placer un marqueur</li>
+        <li class="list-group-item" id="cst_ctxmn_save_img">Enregistrer l'image</li>
+        <li class="list-group-item" id="cst_ctxmn_"></li>
+    </ul>
+
+
+    <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
