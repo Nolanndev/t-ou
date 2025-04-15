@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="favicon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MapLibre Test</title>
     <link rel="stylesheet" href="src/style.css">
@@ -14,24 +14,32 @@
     <div id="map"></div>
 
     <!-- Container des actions -->
-    <div id="container" class="card p-3">
+    <div id="container" class="card p-3 d-flex">
         <button id="btn-itineraire" class="btn btn-primary">Calculer l'itinéraire</button>
+        <!-- Div coordonnées -->
+        <div id="coordinates" class="card">
+            <p>Coordonnées de la souris</p>
+            <p><span class="bold">Lat </span><span id="lat-coord">0</span></p>
+            <p><span class="bold">Lng </span><span id="lng-coord">0</span></p>
+        </div>
+
+        <!--
+            TODO Cette fonctionnalité n'est pas dispo sur les tuiles utilisées.
+            Pour régler ce problème :
+                - utiliser un style compatible avec CORS
+                - héberger ses propres tuiles
+        -->
+        <!-- <button id="btn-screenshot" class="btn btn-light">📸</button> -->
     </div>
 
-
-    <!-- Div coordonnées -->
-    <div id="coordinates">
-        <p>lat <span id="lat-coord"></span></p>
-        <p>lng <span id="lng-coord"></span></p>
-    </div>
+    <div id="toast">Coordonnées copiées dans le presse-papier</div>
 
     <!-- Menu contextuel -->
     <ul id="custom-context-menu" class="list-group position-absolute">
-        <li class="list-group-item" id="cst_ctxmn_start_point">Définir le point de départ</li>
-        <li class="list-group-item" id="cst_ctxmn_end_point">Définir le point d'arrivée</li>
-        <li class="list-group-item" id="cst_ctxmn_add_marker">Placer un marqueur</li>
-        <li class="list-group-item" id="cst_ctxmn_save_img">Enregistrer l'image</li>
-        <li class="list-group-item" id="cst_ctxmn_"></li>
+        <li class="list-group-item" id="cst_ctxmn_start_point">🔴 Définir le point de départ</li>
+        <li class="list-group-item" id="cst_ctxmn_end_point">🟢 Définir le point d'arrivée</li>
+        <li class="list-group-item" id="cst_ctxmn_add_marker">📍 Placer un marqueur</li>
+        <li class="list-group-item" id="cst_ctxmn_save_img">📸 Enregistrer l'image</li>
     </ul>
 
 

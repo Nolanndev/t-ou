@@ -6,15 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
-    "map": "tileserver-gl-light mapData/tiles/basse-normandie.mbtiles"
+    "preview": "vite preview"
   },
   "devDependencies": {
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   },
   "dependencies": {
-    "bootstrap": "^5.3.3",
-    "maplibre-gl": "^5.2.0"
+    "bootstrap": "^5.3.3"
   }
 }

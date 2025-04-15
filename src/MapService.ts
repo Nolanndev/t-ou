@@ -2,6 +2,7 @@
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import IService from "./IService.ts";
+import { showToast } from './util.ts';
 
 /*   TYPES   */
 export type Coords = [latitude: number, longitude: number];
@@ -28,8 +29,8 @@ export default class MapService implements IService {
     // endPoint = { lat: 8.687872, lng: 49.420318 }
 
     // marqueurs pour les itinéraires
-    startMarker = new maplibregl.Marker()
-    endMarker = new maplibregl.Marker()
+    startMarker = new maplibregl.Marker({color: '#ff0000'})
+    endMarker = new maplibregl.Marker({color: '#00ff00'})
 
     // instance de la carte maplibregl
     map: maplibregl.Map = null;
@@ -59,9 +60,10 @@ export default class MapService implements IService {
         this.map = new maplibregl.Map({
             container: 'map',
             // style: 'https://demotiles.maplibre.org/style.json',
-            style: 'http://localhost:8080/styles/basic-preview/style.json',
-            // center: [2.2137, 46.2276],
-            zoom: 15,
+            // style: 'http://localhost:8080/styles/basic-preview/style.json',
+            style: 'https://api.maptiler.com/maps/basic-v2/style.json?key=pYqb4Ltcf5dTFU5W33id',
+            center: [-0.3608859, 49.1843739],
+            zoom: 12,
             interactive: interactive, // interactivité avec la carte (true: oui, false: non)
             maplibreLogo: true,
             rollEnabled: true, // active le Ctr+ clic droit et drag
@@ -89,9 +91,6 @@ export default class MapService implements IService {
                                 <div class="modal-body">
                                     <p class="text-danger">
                                         Le style de la carte n’a pas pu être chargé. Vérifiez l’URL ou le serveur de style
-                                    </p>
-                                    <p>
-                                        Vous pouvez lancer le serveur de style via la commande <span class="bg-secondary text-light">npm run map</span>
                                     </p>
                                 </div>
                             </div>
@@ -131,29 +130,29 @@ export default class MapService implements IService {
 
 
         // Attendre que la carte soit chargée pour récupérer la position de l'utilisateur
-        this.map.on('load', () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (location) => {
-                        const coords: Coords = [location.coords.latitude, location.coords.longitude];
-                        // Centrer la carte sur la position de l'utilisateur
-                        this.map.setCenter([coords[1], coords[0]]);
-                        // Ajouter un marqueur sur cette position
-                        new maplibregl.Marker()
-                            .setLngLat([coords[1], coords[0]])
-                            .addTo(this.map);
-                    },
-                    (error) => {
-                        console.error("Erreur lors de la récupération de la géolocalisation :", error);
-                        this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
-                    },
-                    { enableHighAccuracy: true }
-                );
-            } else {
-                console.warn("La géolocalisation n'est pas supportée par ce navigateur.");
-                this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
-            }
-        });
+        // this.map.on('load', () => {
+        //     if (navigator.geolocation) {
+        //         navigator.geolocation.getCurrentPosition(
+        //             (location) => {
+        //                 const coords: Coords = [location.coords.latitude, location.coords.longitude];
+        //                 // Centrer la carte sur la position de l'utilisateur
+        //                 this.map.setCenter([coords[1], coords[0]]);
+        //                 // Ajouter un marqueur sur cette position
+        //                 new maplibregl.Marker()
+        //                     .setLngLat([coords[1], coords[0]])
+        //                     .addTo(this.map);
+        //             },
+        //             (error) => {
+        //                 console.error("Erreur lors de la récupération de la géolocalisation :", error);
+        //                 this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
+        //             },
+        //             { enableHighAccuracy: true }
+        //         );
+        //     } else {
+        //         console.warn("La géolocalisation n'est pas supportée par ce navigateur.");
+        //         this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
+        //     }
+        // });
 
         // Met la position de la souris à jour à chaque fois qu'elle bouge sur la carte
         // x et y sont les coordonnées de la souris sur l'élément carte
@@ -256,50 +255,89 @@ export default class MapService implements IService {
     }
 
     calculerItineraire() {
-        // const params =
-        //     new URLSearchParams({
-        //         api_key: "5b3ce3597851110001cf6248c270bf2e94944fbe90b0b36e79d52eb2",
-        //         start: `${this.startPoint.lat},${this.startPoint.lng}`,
-        //         end: `${this.endPoint.lat},${this.endPoint.lng}`,
-        //     })
+        console.log(`calcul de l'itinéraire`)
 
-        // const body = {
-        //     coordinates: [
-        //         [this.startPoint.lng, this.startPoint.lat],
-        //         [this.endPoint.lng, this.endPoint.lat]
-        //     ],
-        //     radiuses: [1000, 1000],
+        const body = {
+            coordinates: [
+                [this.startPoint.lng, this.startPoint.lat],
+                [this.endPoint.lng, this.endPoint.lat]
+            ],
+            elevation: true,
+            language: "fr-fr",
+            radiuses: 1000
+        }
+        console.log(body.coordinates[0], body.coordinates[1])
 
-        // }
+        fetch(`https://api.openrouteservice.org/v2/directions/driving-car/geojson`, {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json; charset=utf-8",
+                "Authorization": "5b3ce3597851110001cf6248c270bf2e94944fbe90b0b36e79d52eb2",
+                "Accept": "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8"
+            },
+            body: JSON.stringify(body)
+        })
+            .then(response => {
+                // console.log(response)
+                if (!response.ok) {
+                    throw new Error(`Erreur: ${response.status} : ${response.statusText}`)
+                }
+                return response.json()
+            })
+            .then(response => {
 
-        // fetch(`https://api.openrouteservice.org/v2/directions/driving-car?${params.toString()}`, {
-        //     method: 'POST',
-        //     headers: {
-        //         "Content-Type": "application/json; charset=utf-8",
-        //         "Authorization": "5b3ce3597851110001cf6248c270bf2e94944fbe90b0b36e79d52eb2",
-        //         "Accept": "application/json, application/geo+json, application/gpx+xml, img/png; charset=utf-8"
-        //     },
-        //     body: {
+                // Supprimer les anciennes sources/couches s'il y en a
+                if (this.map.getLayer('route')) {
+                    this.map.removeLayer('route');
+                }
+                if (this.map.getSource('route')) {
+                    this.map.removeSource('route');
+                }
 
-        //     }
-        // })
-        //     .then(response => {
-        //         // console.log(response)
-        //         if (!response.ok) {
-        //             // console.log(`là y'a une erreur`)
-        //             // alert(`Erreur: ${response.status} : ${response.}`)
-        //             throw new Error(`Erreur: ${response.status} : ${response.statusText}`)
-        //             // return
-        //         }
-        //         return response.json()
-        //     })
-        //     .then(response => {
-        //         console.log(response)
-        //     })
-        //     .catch(error => console.error(`Erreur : la requête pour l'itinéraire a échoué`, error))
+                this.map.addSource('route', {
+                    type: 'geojson',
+                    data: response
+                });
+
+                this.map.addLayer({
+                    id: 'route',
+                    type: 'line',
+                    source: 'route',
+                    layout: {
+                        'line-join': 'round',
+                        'line-cap': 'round'
+                    },
+                    paint: {
+                        // 'line-color': '#0074D9',
+                        'line-color': '#ff0000',
+                        'line-width': 4
+                    }
+                });
+
+                // Zoomer sur l'itinéraire
+                const coords = response.features[0].geometry.coordinates;
+                const bounds = coords.reduce((b, coord) => b.extend(coord), new maplibregl.LngLatBounds(coords[0], coords[0]));
+                this.map.fitBounds(bounds, { padding: 200 });
+
+            })
+            .catch(error => {
+                // TODO Le toast d'erreur ne s'affiche pas en rouge
+                console.error(`L'itinéraire n'a pas pu être calculé`, error)
+                showToast(`L'itinéraire n'a pas pu être calculé`, 4000, true)
+            })
     }
 
-
+    async takeScreenshot() {
+        const canvas = this.map.getCanvas();
+        canvas.toBlob((blob) => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'carte.png';
+            a.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    }
 
     private _isWebglSupported() {
         if (window.WebGLRenderingContext) {

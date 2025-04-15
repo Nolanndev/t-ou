@@ -1,4 +1,5 @@
 
+import { showToast } from './util.ts';
 
 document.addEventListener('contextmenu', function (e) {
     e.preventDefault();
@@ -59,3 +60,24 @@ document.getElementById('btn-itineraire').addEventListener('click', () => {
 
 // Regex pour des coordonnées de la forme xxx.xxxxx;xxx.xxxxx
 // ^-?\d{1,3}(\.\d{0,18})?;-?\d{1,3}(\.\d{0,18})?$
+
+
+
+// Copie des coordonnées dans le presse-papier lors du clic sur div#coordinates
+document.getElementById('coordinates').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText("hello world");
+      showToast("Coordonnées copiées dans le presse-papier");
+    } catch (err) {
+      console.error('Erreur lors de la copie :', err);
+    }
+  });
+
+  
+
+
+
+  // Capture d'écran
+  document.getElementById('btn-screenshot').addEventListener('click', async () => {
+    await mapService.takeScreenshot()
+  });
