@@ -66,18 +66,12 @@ document.getElementById('btn-itineraire').addEventListener('click', () => {
 // Copie des coordonnées dans le presse-papier lors du clic sur div#coordinates
 document.getElementById('coordinates').addEventListener('click', async () => {
     try {
-      await navigator.clipboard.writeText("hello world");
-      showToast("Coordonnées copiées dans le presse-papier");
+        await navigator.clipboard.writeText("hello world");
+        showToast("Coordonnées copiées dans le presse-papier");
     } catch (err) {
-      console.error('Erreur lors de la copie :', err);
+        console.error('Erreur lors de la copie :', err);
     }
-  });
-
-  
+});
 
 
 
-  // Capture d'écran
-  document.getElementById('btn-screenshot').addEventListener('click', async () => {
-    await mapService.takeScreenshot()
-  });

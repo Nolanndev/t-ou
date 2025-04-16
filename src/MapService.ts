@@ -1,14 +1,55 @@
-/*   IMPORTS   */
+// ================================================
+//  III  M   M  PPPP    OOO   RRRR   TTTTT   SSS
+//   I   MM MM  P   P  O   O  R   R    T    S
+//   I   M M M  P   P  O   O  R   R    T     SSS
+//   I   M   M  PPPP   O   O  RRRR     T        S
+//   I   M   M  P      O   O  R  R     T        S
+//  III  M   M  P       OOO   R   R    T    SSSS
+// ================================================
+// * * * Imports
+
+
+
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import IService from "./IService.ts";
 import { showToast } from './util.ts';
 
-/*   TYPES   */
-export type Coords = [latitude: number, longitude: number];
 
-/*   SERVICE   */
-export default class MapService implements IService {
+
+// ====================================
+//  TTTTT  Y   Y  PPPP   EEEEE   SSS
+//    T    Y   Y  P   P  E      S
+//    T     Y Y   P   P  EEE     SSS
+//    T      Y    PPPP   E          S
+//    T      Y    P      E          S
+//    T      Y    P      EEEEE  SSSS
+// ====================================
+// * * * types
+
+
+
+type MousePosition = {
+    x: number,
+    y: number,
+    lat: number,
+    lng: number,
+}
+
+
+
+// ================================================
+//   SSS   EEEEE  RRRR   V   V  III   CCC   EEEEE
+//  S      E      R   R  V   V   I   C   C  E
+//   SSS   EEE    R   R  V   V   I   C      EEE
+//      S  E      RRRR    V V    I   C      E
+//      S  E      R  R    V V    I   C   C  E
+//  SSSS   EEEEE  R   R    V    III   CCC   EEEEE
+// ================================================
+// * * * Service
+
+
+
+export default class MapService {
 
     // utilisée pour le comportement Singleton du Service
     private static _instance: MapService;
@@ -29,8 +70,8 @@ export default class MapService implements IService {
     // endPoint = { lat: 8.687872, lng: 49.420318 }
 
     // marqueurs pour les itinéraires
-    startMarker = new maplibregl.Marker({color: '#ff0000'})
-    endMarker = new maplibregl.Marker({color: '#00ff00'})
+    startMarker = new maplibregl.Marker({ color: '#ff0000' })
+    endMarker = new maplibregl.Marker({ color: '#00ff00' })
 
     // instance de la carte maplibregl
     map: maplibregl.Map = null;
@@ -59,8 +100,6 @@ export default class MapService implements IService {
 
         this.map = new maplibregl.Map({
             container: 'map',
-            // style: 'https://demotiles.maplibre.org/style.json',
-            // style: 'http://localhost:8080/styles/basic-preview/style.json',
             style: 'https://api.maptiler.com/maps/basic-v2/style.json?key=pYqb4Ltcf5dTFU5W33id',
             center: [-0.3608859, 49.1843739],
             zoom: 12,
@@ -129,31 +168,6 @@ export default class MapService implements IService {
         );
 
 
-        // Attendre que la carte soit chargée pour récupérer la position de l'utilisateur
-        // this.map.on('load', () => {
-        //     if (navigator.geolocation) {
-        //         navigator.geolocation.getCurrentPosition(
-        //             (location) => {
-        //                 const coords: Coords = [location.coords.latitude, location.coords.longitude];
-        //                 // Centrer la carte sur la position de l'utilisateur
-        //                 this.map.setCenter([coords[1], coords[0]]);
-        //                 // Ajouter un marqueur sur cette position
-        //                 new maplibregl.Marker()
-        //                     .setLngLat([coords[1], coords[0]])
-        //                     .addTo(this.map);
-        //             },
-        //             (error) => {
-        //                 console.error("Erreur lors de la récupération de la géolocalisation :", error);
-        //                 this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
-        //             },
-        //             { enableHighAccuracy: true }
-        //         );
-        //     } else {
-        //         console.warn("La géolocalisation n'est pas supportée par ce navigateur.");
-        //         this.map.setCenter([-0.350000, 49.183333]) // Coordonnées de la ville de Caen
-        //     }
-        // });
-
         // Met la position de la souris à jour à chaque fois qu'elle bouge sur la carte
         // x et y sont les coordonnées de la souris sur l'élément carte
         // lat et lng sont les coordonnées de la souris sur la carte
@@ -165,11 +179,6 @@ export default class MapService implements IService {
 
             this.latElement.innerText = e.lngLat.wrap().lat.toString()
             this.lngElement.innerText = e.lngLat.wrap().lng.toString()
-        })
-
-
-        this.map.on('load', () => {
-            this.testLayer();
         })
 
         // Toutes les initialisations sont terminées avec succès
@@ -216,44 +225,6 @@ export default class MapService implements IService {
         return true;
     }
 
-    testLayer() {
-        if (!this.initialized) return false;
-
-        if (this.map) {
-
-            this.map.addSource('test', {
-                type: 'geojson',
-                data: {
-                    'type': 'FeatureCollection',
-                    'features': [
-                        {
-                            'type': 'Feature',
-                            'geometry': {
-                                'type': 'MultiPoint',
-                                'coordinates': [
-                                    [0.0, 0.0],
-                                    [0.0, 1.0],
-                                    [0.0, 2.0],
-                                ]
-                            },
-                            'properties': {} // Ajoutez des propriétés si besoin
-                        }
-                    ]
-                }
-            })
-
-            this.map.addLayer({
-                id: 'test',
-                type: 'circle',
-                source: 'test',
-                paint: {
-                    "circle-radius": 6,
-                    'circle-color': '#007cbf',
-                }
-            })
-        }
-    }
-
     calculerItineraire() {
         console.log(`calcul de l'itinéraire`)
 
@@ -280,6 +251,7 @@ export default class MapService implements IService {
             .then(response => {
                 // console.log(response)
                 if (!response.ok) {
+                    showToast(`L'itinéraire n'a pas pu être calculé`, 4000, true)
                     throw new Error(`Erreur: ${response.status} : ${response.statusText}`)
                 }
                 return response.json()
@@ -327,17 +299,6 @@ export default class MapService implements IService {
             })
     }
 
-    async takeScreenshot() {
-        const canvas = this.map.getCanvas();
-        canvas.toBlob((blob) => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'carte.png';
-            a.click();
-            URL.revokeObjectURL(url);
-        }, 'image/png');
-    }
 
     private _isWebglSupported() {
         if (window.WebGLRenderingContext) {
@@ -356,15 +317,5 @@ export default class MapService implements IService {
         console.warn(`WebGL is not supported`);
         return false;
     }
-
-
-
 }
 
-
-type MousePosition = {
-    x: number,
-    y: number,
-    lat: number,
-    lng: number,
-}
